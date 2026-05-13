@@ -1,13 +1,15 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-"""This module allows users to retrieve information
-about a ACLP Monitor Service Logs Destination."""
+"""This module allows users to retrieve information about a Linode Monitor Logs Stream."""
 
 from __future__ import absolute_import, division, print_function
 
 from ansible_collections.linode.cloud.plugins.module_utils.doc_fragments import (
-    logs_destination_info as docs,
+    monitor_logs_stream as docs_parent,
+)
+from ansible_collections.linode.cloud.plugins.module_utils.doc_fragments import (
+    monitor_logs_stream_info as docs,
 )
 from ansible_collections.linode.cloud.plugins.module_utils.linode_common_info import (
     InfoModule,
@@ -18,24 +20,24 @@ from ansible_collections.linode.cloud.plugins.module_utils.linode_helper import 
     safe_find,
 )
 from ansible_specdoc.objects import FieldType
-from linode_api4 import LogsDestination
+from linode_api4 import LogsStream
 
 module = InfoModule(
-    examples=docs.specdoc_examples,
     primary_result=InfoModuleResult(
-        display_name="Logs Destination",
-        field_name="logs_destination",
+        field_name="stream",
         field_type=FieldType.dict,
-        docs_url="https://techdocs.akamai.com/linode-api/reference/get-destination",
-        samples=docs.result_logs_destination_samples,
+        display_name="Monitor Logs Stream",
+        docs_url="https://techdocs.akamai.com/linode-api/reference/get-stream",
+        samples=docs_parent.result_stream_samples,
     ),
     attributes=[
         InfoModuleAttr(
-            name="id",
             display_name="ID",
+            name="id",
             type=FieldType.integer,
             get=lambda client, params: client.load(
-                LogsDestination, params.get("id")
+                LogsStream,
+                params.get("id"),
             )._raw_json,
         ),
         InfoModuleAttr(
@@ -43,12 +45,13 @@ module = InfoModule(
             name="label",
             type=FieldType.string,
             get=lambda client, params: safe_find(
-                client.monitor.destinations,
-                LogsDestination.label == params.get("label"),
+                client.monitor.streams,
+                LogsStream.label == params.get("label"),
                 raise_not_found=True,
             )._raw_json,
         ),
     ],
+    examples=docs.specdoc_examples,
 )
 
 SPECDOC_META = module.spec
